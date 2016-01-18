@@ -1,15 +1,15 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Digital Bankruptcy Registration Service",
-        "description": "Register a bankrupt individual",
+        "title": "Digital Bankruptcy Registration Service [Test Stub]",
+        "description": "Register a bankrupt individual [Test service - has no effect]",
         "version": "1.0.0"
     },
-    "host": "localhost:5001",
+    "host": "localhost:6001",
     "schemes": [
         "https"
     ],
-    "basePath": "/v1",
+    "basePath": "",
     "produces": [
         "application/json"
     ],
@@ -34,13 +34,20 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "An array of registration numbers",
+                        "description": "An acknowledgement of registration",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
+                            "schema": null,
+                            "$ref": "#/definitions/Result"
                         }
+                    },
+                    "400": {
+                        "description": "Invalid request submitted",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "415": {
+                        "description": "Invalid content-type supplied"
                     },
                     "500": {
                         "description": "It broke :("
@@ -50,6 +57,66 @@
         }
     },
     "definitions": {
+        "Result": {
+            "type": "object",
+            "properties": {
+                "application_ref": {
+                    "type": "string",
+                    "description": "The application_ref supplied in the request"
+                },
+                "application_type": {
+                    "type": "string",
+                    "description": "The application_type supplied in the request"
+                },
+                "new_registrations": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "fornames": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "surname": {
+                                "type": "string"
+                            },
+                            "number": {
+                                "type": "integer"
+                            },
+                            "date": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Errors": {
+            "type": "object",
+            "properties": {
+                "application_ref": {
+                    "type": "string",
+                    "description": "The application_ref supplied in the request"
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "description": "JSONPath to the invalid data",
+                                "type": "string"
+                            },
+                            "error_message": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "Registration": {
             "type": "object",
             "required": [
@@ -109,7 +176,10 @@
                     "type": "boolean"
                 },
                 "business_address": {
-                    "$ref": "#/definitions/Address"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Address"
+                    }
                 },
                 "date_of_birth": {
                     "type": "string"
@@ -126,12 +196,16 @@
             "type": "object",
             "properties": {
                 "address_lines": {
+                    "description": "Lines of the address, excluding postcode and county",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "postcode": {
+                    "type": "string"
+                },
+                "county": {
                     "type": "string"
                 }
             }
